@@ -1,0 +1,33 @@
+{
+  "name": "@astronautlabs/twine",
+  "version": "0.0.1",
+  "description": "A tool for distributing prebuilt binaries for Node.js native addons",
+  "main": "dist/index.js",
+  "bin": {
+    "twine": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "npm run build && node dist/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astronautlabs/twine.git"
+  },
+  "keywords": [
+    "prebuild"
+  ],
+  "author": "Astronaut Labs, LLC",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/astronautlabs/twine/issues"
+  },
+  "homepage": "https://github.com/astronautlabs/twine#readme",
+  "dependencies": {
+    "@alterior/command-line": "^3.0.0-rc.5",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.2"
+  }
+}

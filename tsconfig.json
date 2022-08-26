@@ -1,0 +1,29 @@
+{
+	"compilerOptions": {
+		"experimentalDecorators": true,
+		"target": "es2016",
+		"sourceMap": true,
+		"declarationMap": true,
+		"outDir": "./dist",
+		"module": "commonjs",
+		"moduleResolution": "node",
+        "stripInternal": true,
+		"preserveSymlinks": true,
+        "importHelpers": true,
+        "esModuleInterop": true,
+		"lib": [
+			"es2016",
+			"dom"
+		],
+		"declaration": true,
+		"emitDecoratorMetadata": true,
+		"downlevelIteration": true
+	},
+    "include": [
+        "src/**/*.ts"
+    ],
+	"exclude": [
+		"node_modules",
+		"dist"
+	]
+}
