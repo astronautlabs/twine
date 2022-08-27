@@ -2,17 +2,23 @@
 [![NPM](https://img.shields.io/npm/v/@astronautlabs/twine.svg)](https://www.npmjs.com/package/@astronautlabs/twine)
 
 
-A tool for distributing prebuilt binaries for Node.js native addons.
+A tool for distributing binary artifacts for Node.js native addons.
 
 # Introduction
 
 Twine is entirely convention based which allows the tool to be extremely minimal and easy to set up.
-The archive uploaded/downloaded will be based on inferred properties of the system Twine is run from:
+The artifact uploaded/downloaded will be based on inferred properties of the environment Twine is run from. 
+
+Artifacts are named in the following manner:
 
 ```ts
 // pkg is your package JSON
-`${pkg.name}@${pkg.version}.${process.platform}-${process.arch}-${buildType}.tgz`
+// buildType is Debug or Release
+`${pkg.name}@${pkg.version}.${process.platform}-${process.arch}-${buildType}.zip`
 ```
+
+Each artifact consists of a Zip archive of the contents of `build/Debug` or `build/Release`, depending on the 
+build type.
 
 Twine will also automatically skip building when you run `npm install` from within your working copy during 
 development.
@@ -38,15 +44,15 @@ Also add a `"twine"` section to your `package.json`:
 }
 ```
 
-To publish a build, first build your module:
+To publish an artifact, first build your module:
 ```
 npm run build:native
 ```
 
-You would now want to do any testing or other validation on the resulting build.
+You would then want to do any testing or other validation on the resulting build.
 
-Add a `.env` file in your project root.
-**Important**: Make sure to exclude this from version control in `.gitignore` AND `.npmignore`
+Add a `.env` file in your project root, or provide the equivalent environment variables to the publish command.
+**Important**: Make sure `.env` is excluded from version control and publishing using `.gitignore` AND `.npmignore`.
 
 ```
 S3_ACCESS_KEY_ID=...
@@ -66,7 +72,7 @@ npm run twine:publish
 
 # Using subfolders
 
-If you wish to publish into a specific folder (and download from that folder), you can do so by modifying your
+If you wish to publish artifacts into a specific folder (and download from that folder), you can do so by modifying your
 `twine.distributionUrl` and specifying the `S3_FOLDER` environment variable while publishing, like so:
 
 ```json
@@ -80,5 +86,15 @@ If you wish to publish into a specific folder (and download from that folder), y
 S3_FOLDER=my-project
 ```
 
-This works with multiple levels of folders, for instance `S3_FOLDER=my-org/my-project/my-branch` if you want, you just
-need to ensure that `distributionUrl` matches.
+This works with multiple levels of folders, for instance `S3_FOLDER=my-org/my-project/my-branch` provided that you 
+ensure `distributionUrl` matches.
+
+# Distributing artifacts inline
+
+Twine supports distributing artifacts inline within your NPM package. Twine will look for artifacts within the 
+`.twine` folder, and if a matching one exists, it will be unpacked to the appropriate location within the `build/` folder
+during install-time.
+
+You can download all existing prebuilt artifacts from your distribution server using `twine pack`. If you wish to enforce
+that only packed artifacts will be used at installation time, you can set the `twine.packOnly` property in your `package.json`
+to `true`.

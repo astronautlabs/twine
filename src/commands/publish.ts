@@ -1,24 +1,24 @@
-import { S3 } from "aws-sdk";
-import { fileExists, fileSize, randomNumberOfLength, retryOnFail } from "./utils";
+import { fileExists, fileSize, randomNumberOfLength, retryOnFail, s3 } from "../utils";
 import * as fs from 'fs';
 import path from "path";
 import * as archiver from 'archiver';
 import * as os from 'os';
+import { CommandInfo } from "@alterior/command-line";
 
-export async function upload() {
+export async function publish(args: string[]) {
     let pkg = require(path.join(process.cwd(), 'package.json'));
     let buildDir = path.join(process.cwd(), 'build');
     let buildTypes = ['Release', 'Debug'];
     let binaryName = `${pkg.twine.moduleName}.node`;
 
     for (let buildType of buildTypes) {
-        let variantName = `${pkg.name}@${pkg.version}.${process.platform}-${process.arch}-${buildType}.tgz`;
+        let variantName = `${pkg.name}@${pkg.version}.${process.platform}-${process.arch}-${buildType}.zip`;
         let buildTypeDir = path.join(buildDir, buildType);
         let binaryFile = path.join(buildTypeDir, binaryName);
         if (!await fileExists(binaryFile))
             continue;
         
-        let stagedFile = path.join(os.tmpdir(), `twine-${randomNumberOfLength(7)}.tgz`);
+        let stagedFile = path.join(os.tmpdir(), `twine-${randomNumberOfLength(7)}.zip`);
         let archive = archiver
             .create('zip', { zlib: { level: 9 }})
             .directory(buildTypeDir, false)
@@ -31,14 +31,12 @@ export async function upload() {
     }
 }
 
+publish.info = <CommandInfo>{
+    description: 'Publish artifacts for the current version/platform/architecture/build-types'
+};
+
 async function uploadFile(path: string, filename: string) {
-    const client = new S3({
-        endpoint: process.env.S3_ENDPOINT,
-        credentials: {
-            accessKeyId: process.env.S3_ACCESS_KEY_ID ?? process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY ?? process.env.AWS_SECRET_ACCESS_KEY
-        }
-    });
+    const client = s3();
 
     if (process.env.S3_FOLDER) {
         path = `${process.env.S3_FOLDER}/${path}`;

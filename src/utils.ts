@@ -1,8 +1,75 @@
 import * as fs from 'fs';
 import * as stream from 'stream';
+import { S3 } from "aws-sdk";
+import * as childProcess from "child_process";
 
 export async function stat(filename : string) {
     return await new Promise<fs.Stats>((rs, rj) => fs.stat(filename, (e, s) => e ? rj(e) : rs(s)));
+}
+
+export function s3() {
+    return new S3({
+        endpoint: process.env.S3_ENDPOINT,
+        credentials: {
+            accessKeyId: process.env.S3_ACCESS_KEY_ID ?? process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY ?? process.env.AWS_SECRET_ACCESS_KEY
+        }
+    });
+}
+
+export async function s3List(prefix: string): Promise<S3.Object[]> {
+    const client = s3();
+    if (process.env.S3_FOLDER)
+        prefix = `${process.env.S3_FOLDER}/${prefix}`;
+    
+    let results = await client.listObjects({
+        Bucket: process.env.S3_BUCKET,
+        Prefix: prefix
+    });
+
+    let objects: S3.Object[] = [];
+    await new Promise<void>((resolve, reject) => {
+        results.eachPage((err, data) => {
+            if (err) {
+                reject(err);
+                return false;
+            } else if (data === null) {
+                resolve();
+                return false;
+            } else {
+                objects.push(...data.Contents);
+                return true;
+            }
+        })
+    });
+
+    return objects;
+}
+
+export async function run(command: string, args: string[]) {
+    await new Promise<void>((resolve, reject) => {
+        childProcess
+            .spawn(command, args,  { stdio: 'inherit' })
+            .addListener('exit', code => code === 0 
+                ? resolve()
+                : reject(code)
+            );
+    });
+}
+
+export async function npmRun(command: string) {
+    await run(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['run', command]);
+}
+
+export async function download(url: string): Promise<stream.Readable> {
+    let response = await fetch(url);
+    if (response.status !== 200)
+        throw new Error(`Error ${response.status} while downloading ${url}`);
+    return response.body as unknown as stream.Readable;
+}
+
+export async function makeDir(dir: string) {
+    return new Promise<void>((rs, rj) => fs.mkdir(dir, err => err ? rj(err) : rs()));
 }
 
 export async function fileSize(filename : string) {
