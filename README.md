@@ -1,4 +1,6 @@
 # @/twine
+[![NPM](https://img.shields.io/npm/v/@astronautlabs/twine.svg)](https://www.npmjs.com/package/@astronautlabs/twine)
+
 
 A tool for distributing prebuilt binaries for Node.js native addons.
 
