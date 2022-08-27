@@ -31,7 +31,7 @@ export async function upload() {
     }
 }
 
-export async function uploadFile(path: string, filename: string) {
+async function uploadFile(path: string, filename: string) {
     const client = new S3({
         endpoint: process.env.S3_ENDPOINT,
         credentials: {

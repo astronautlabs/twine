@@ -46,7 +46,7 @@ export async function install(args: string[]) {
  * @param url 
  * @param filename 
  */
-export async function installArchive(url: string, buildFolder: string): Promise<boolean> {
+async function installArchive(url: string, buildFolder: string): Promise<boolean> {
     console.log(`Downloading ${url}`);
     console.log(`   extracting to:  ${buildFolder}`);
 
