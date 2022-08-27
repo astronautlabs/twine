@@ -13,6 +13,10 @@ export class Uploader {
             }
         });
 
+        if (process.env.S3_FOLDER) {
+            path = `${process.env.S3_FOLDER}/${path}`;
+        }
+
         let exists = true;
         try {
             await client.headObject({ 

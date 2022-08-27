@@ -61,3 +61,22 @@ Now publish your build using twine:
 ```
 npm run twine:publish
 ```
+
+# Using subfolders
+
+If you wish to publish into a specific folder (and download from that folder), you can do so by modifying your
+`twine.distributionUrl` and specifying the `S3_FOLDER` environment variable while publishing, like so:
+
+```json
+"twine": {
+    "distributionUrl": "https://my-downloads.example.com/my-project",
+    "moduleName": "my-project"
+}
+```
+
+```bash
+S3_FOLDER=my-project
+```
+
+This works with multiple levels of folders, for instance `S3_FOLDER=my-org/my-project/my-branch` if you want, you just
+need to ensure that `distributionUrl` matches.
