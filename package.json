@@ -6,6 +6,9 @@
   "bin": {
     "twine": "./dist/cli.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -b",
     "test": "npm run build && node dist/test.js"
