@@ -37,7 +37,7 @@ Add the following scripts to your `package.json`:
 
 Also add a `"twine"` section to your `package.json`:
 
-```json
+```jsonc
 "twine": {
     "distributionUrl": "https://my-downloads.example.com",
     "moduleName": "my-native-addon"  // ie: as in build/Release/my-native-addon.node
