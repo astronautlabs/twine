@@ -25,9 +25,17 @@
   "homepage": "https://github.com/astronautlabs/twine#readme",
   "dependencies": {
     "@alterior/command-line": "^3.0.0-rc.5",
-    "tslib": "^2.4.0"
+    "@alterior/platform-nodejs": "^3.0.2",
+    "archiver": "^5.3.1",
+    "aws-sdk": "^2.1203.0",
+    "node-fetch": "^3.2.10",
+    "tslib": "^2.4.0",
+    "unzipper": "^0.10.11"
   },
   "devDependencies": {
+    "@types/archiver": "^5.3.1",
+    "@types/node": "^18.7.13",
+    "@types/unzipper": "^0.10.5",
     "typescript": "^4.8.2"
   }
 }
