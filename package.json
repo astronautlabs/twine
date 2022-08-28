@@ -1,6 +1,6 @@
 {
   "name": "@astronautlabs/twine",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A tool for distributing prebuilt binaries for Node.js native addons",
   "main": "dist/index.js",
   "bin": {
