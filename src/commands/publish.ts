@@ -47,7 +47,7 @@ async function uploadFile(path: string, filename: string) {
         await client.headObject({ 
             Bucket: process.env.S3_BUCKET,
             Key: path
-        });
+        }).promise();
     } catch (e) {
         if (e.code === 'NotFound')
             exists = false;
