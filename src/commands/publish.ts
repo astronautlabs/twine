@@ -1,4 +1,4 @@
-import { fileExists, fileSize, randomNumberOfLength, retryOnFail, s3 } from "../utils";
+import { fileExists, fileSize, randomNumberOfLength, retryOnFail, s3, unlinkFile } from "../utils";
 import * as fs from 'fs';
 import path from "path";
 import * as archiver from 'archiver';
@@ -27,7 +27,7 @@ export async function publish(args: string[]) {
         await archive.finalize();
 
         await uploadFile(variantName, stagedFile);
-        await new Promise<void>((rs, rj) => fs.unlink(stagedFile, err => err ? rj(err) : rs()));
+        await unlinkFile(stagedFile);
     }
 }
 

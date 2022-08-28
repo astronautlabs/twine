@@ -163,3 +163,7 @@ export function randomNumberOfLength(digits = 7, base = 10) {
     
     return base**(digits-1) + Math.random() * (base**digits - base**(digits-1)) | 0;
 }
+
+export async function unlinkFile(file: string) {
+    await new Promise<void>((rs, rj) => fs.unlink(file, err => err ? rj(err) : rs()));
+}
