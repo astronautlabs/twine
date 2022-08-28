@@ -17,7 +17,7 @@ export function s3() {
     });
 }
 
-export async function s3List(prefix: string): Promise<S3.Object[]> {
+export async function s3List(prefix: string): Promise<string[]> {
     const client = s3();
     if (process.env.S3_FOLDER)
         prefix = `${process.env.S3_FOLDER}/${prefix}`;
@@ -27,7 +27,7 @@ export async function s3List(prefix: string): Promise<S3.Object[]> {
         Prefix: prefix
     });
 
-    let objects: S3.Object[] = [];
+    let objects: string[] = [];
     await new Promise<void>((resolve, reject) => {
         results.eachPage((err, data) => {
             if (err) {
@@ -37,7 +37,7 @@ export async function s3List(prefix: string): Promise<S3.Object[]> {
                 resolve();
                 return false;
             } else {
-                objects.push(...data.Contents);
+                objects.push(...data.Contents.map(o => o.Key.slice((process.env.S3_FOLDER + '/' ?? '').length)));
                 return true;
             }
         })
@@ -68,7 +68,18 @@ export async function download(url: string): Promise<stream.Readable> {
     return response.body as unknown as stream.Readable;
 }
 
+export async function dirExists(filename : string) {
+    try {
+        let s = await stat(filename);
+        return s.isDirectory();
+    } catch (e) {
+        return false;
+    }
+}
+
 export async function makeDir(dir: string) {
+    if (await dirExists(dir))
+        return;
     return new Promise<void>((rs, rj) => fs.mkdir(dir, err => err ? rj(err) : rs()));
 }
 
